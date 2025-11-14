@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Weibull PM — PWA</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2b7a78"/>
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Weibull PM — Preventive Maintenance Tool (PWA)</h1>
+  </header>
+
+  <main>
+    <section class="left">
+      <label>Data mode:
+        <select id="dataMode">
+          <option value="weibull">Weibull parameters</option>
+          <option value="manual">Manual TTF (F / S)</option>
+        </select>
+      </label>
+
+      <div id="weibullParams">
+        <label>β (shape) <input id="beta" type="number" step="0.01" value="4.49"></label>
+        <label>η (scale) <input id="eta" type="number" step="1" value="1313"></label>
+      </div>
+
+      <div id="manualBox" style="display:none;">
+        <label>TTF lines (format: "time, F" or "time, S") :</label>
+        <textarea id="ttf" placeholder="e.g. 2000,F&#10;1500,F&#10;1800,S"></textarea>
+        <label><button id="fitBtn">Estimate Weibull (MLE)</button></label>
+      </div>
+
+      <label>Unit
+        <select id="unit">
+          <option>Days</option>
+          <option>Hours</option>
+        </select>
+      </label>
+
+      <label>t query <input id="tquery" type="number" value="365"></label>
+      <label>Confidence (0-1) <input id="conf" type="number" step="0.01" min="0.5" max="0.99" value="0.9"></label>
+      <label>Bootstrap samples <input id="nboot" type="number" value="300" min="20" max="2000"></label>
+
+      <h3>Costs</h3>
+      <label>C_PM <input id="cpm" type="number" value="1668"></label>
+      <label>C_CM <input id="ccm" type="number" value="4679"></label>
+
+      <div class="buttons">
+        <button id="plotBtn">Plot Reliability & Hazard</button>
+        <button id="pmBtn" class="primary">Compute PM optimum & Cost</button>
+        <button id="exportCsv">Export CSV</button>
+        <button id="clearBtn">Clear</button>
+      </div>
+
+      <div id="results">
+        <h4>Results</h4>
+        <pre id="summary">Ready.</pre>
+      </div>
+    </section>
+
+    <section class="right">
+      <div id="plotReliability" class="plot"></div>
+      <div id="plotFailureRate" class="plot"></div>
+      <div id="plotCost" class="plot"></div>
+    </section>
+  </main>
+
+  <footer>
+    <small>Weibull PM — offline PWA. Converted from Python notebook to client-side web app.</small>
+  </footer>
+
+  <script src="weibull.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js').catch(console.error);
+    }
+  </script>
+</body>
+</html>
